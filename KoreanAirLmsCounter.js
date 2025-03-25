@@ -40,11 +40,16 @@ export default function KoreanAirLMSCounter() {
   const [byteCount, setByteCount] = useState(0);
   const maxBytes = 2610;
 
+// 바이트 수를 정확히 계산하는 함수
   const calculateBytes = (input) => {
-    const encoder = new TextEncoder();
-    return encoder.encode(input).length;
+    let byteCount = 0;
+    for (let i = 0; i < input.length; i++) {
+      // 한글은 3바이트, 영어는 1바이트로 처리
+      byteCount += input.charCodeAt(i) > 255 ? 3 : 1;
+    }
+    return byteCount;
   };
-
+  
   const handleChange = (e) => {
     const inputText = e.target.value;
     const bytes = calculateBytes(inputText);
@@ -53,23 +58,38 @@ export default function KoreanAirLMSCounter() {
   };
 
   return (
-    <div style={containerStyles}>
-      <h1 style={headerStyles}>Korean Air x Insider LMS Text Counter</h1>
-      <textarea
-        style={textareaStyles}
-        placeholder="메시지를 입력하세요..."
-        value={text}
-        onChange={handleChange}
-      />
-      <div style={{ marginBottom: "10px" }}>
-        바이트 수: {byteCount} / {maxBytes}
-      </div>
-      <button
-        style={buttonStyles}
-        disabled={byteCount > maxBytes}
-      >
-        검증 완료
-      </button>
+    <div className="flex flex-col items-center p-6" style={{ backgroundColor: "#FFFFFF" }}>
+     <div style={containerStyles}>
+      <h1 className="text-2xl font-bold" style={{ color: "#051766", fontFamily: "'Noto Sans', sans-serif" }}>
+          Korean Air x Insider LMS Text Counter
+        </h1>
+    <Card className="w-full max-w-2xl p-4">
+        <CardContent>
+          {/* 입력창 배경색 변경 */}
+          <Textarea
+            className="w-full h-40 p-2 border rounded"
+            placeholder="메시지를 입력하세요..."
+            value={text}
+            onChange={handleChange}
+            style={{ backgroundColor: "#DBE2E9" }}
+          />
+          {/* 바이트 수 색상 변경 */}
+          <div className="mt-2 text-right font-semibold" style={{ color: "#051766" }}>
+            바이트 수: {byteCount} / {maxBytes}
+          </div>
+          {/* 버튼 배경색과 글자색 변경 */}
+          <Button
+            className="mt-4 w-full"
+            style={{
+              backgroundColor: "#57BBEB",
+              color: "#051766",
+            }}
+            disabled={byteCount > maxBytes}
+          >
+            검증 완료
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
